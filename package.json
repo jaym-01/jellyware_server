@@ -4,8 +4,9 @@
   "description": "backend for jellyware",
   "main": "index.js",
   "scripts": {
-    "start": "npx tsc && node C:/Users/Jay/OneDrive/Files/Websites/jellyware/server/server_built/index.js",
-    "build": "npx tsc"
+    "start": "node ./server_built/index.js",
+    "build": "npx tsc",
+    "dev": "npx tsc && node ./server_built/index.js"
   },
   "author": "Jay",
   "dependencies": {
