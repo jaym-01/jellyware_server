@@ -10,7 +10,11 @@ interface urlRes {
 // generates hash for the url
 // converts hash output to base64 url string
 function encodeURL(url: string): string {
+  // produces 128 bit hash -> converted into a base64  
   const hash = cryptol.createHash("MD5");
+
+  // return 22 chaar string
+  // the binary number from hash = base64url
   return hash.update(url).digest("base64url");
 }
 
@@ -26,24 +30,24 @@ function getURL(b64Hash: string, res) {
 
     if (b64Hash in urlsObjs) res.redirect(urlsObjs[b64Hash]);
     else {
-      res.json(fail);
+      res.sendStatus(404);
     }
     
   } catch {
-    res.json(fail);
+    res.sendStatus(404);
   }
 }
 
 // get code for URL
-function generateURL(urlObj: object, url: string): string {
+function generateURL(urlObjs: object, url: string): string {
   const b64Hash: string = encodeURL(url);
 
   // if doesn't exist - add it
-  if (!(b64Hash in urlObj)) {
-    urlObj[b64Hash] = url;
+  if (!(b64Hash in urlObjs)) {
+    urlObjs[b64Hash] = url;
     writeFileSync(
       path.resolve(__dirname + "/url_data.json"),
-      JSON.stringify(urlObj)
+      JSON.stringify(urlObjs)
     );
   }
 
@@ -53,8 +57,6 @@ function generateURL(urlObj: object, url: string): string {
 function createURL(url: string, res) {
   var out: urlRes = { passed: false };
   try {
-    // validate input
-
     // get data of string added
     var urlData = readFileSync(path.resolve(__dirname + "/url_data.json"));
     var urlsObjs = JSON.parse(urlData);

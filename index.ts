@@ -16,7 +16,7 @@ const url_short = require("./url_shortener/url_shortener");
 
 const convertHTML = convert_HTML.convert;
 
-app.use(express.static(path.join(__dirname + "/../../" + "client/build")));
+app.use(express.static(path.join(__dirname + "/client/build")));
 
 //post api request
 app.post("/api/convertdocxhtml", mul().single("file"), function (req, res) {
@@ -55,19 +55,20 @@ app.post("/api/verify", bp.urlencoded({ extended: false }), (req, res) => {
 });
 
 app.get("/shorturl/:urlid", (req, res) => {
+  // validate input
+  // use regex to ensure it is a valid base64URL value
+
   url_short.getURL(req.params.urlid, res);
 });
 
 app.post("/api/shorturl", bp.json(), (req, res) => {
-  console.log(req.body);
-});
+  // validate the url
 
-app.get("/test", (req, res)=>{
-  res.redirect("google.com");
+  url_short.createURL(req.body.url, res);
 });
 
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/../" + "build/index.html"));
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
-app.listen(3000, () => console.log("listening"));
+app.listen(8080, () => console.log("listening"));

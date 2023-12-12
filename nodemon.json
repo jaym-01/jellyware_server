@@ -1,0 +1,6 @@
+{
+    "ignore": ["./client/build", "./url_shortener/url_data.json"],
+    "events":{
+        "start": "cd client && npm run build"
+    }
+}
