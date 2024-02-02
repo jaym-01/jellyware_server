@@ -1,6 +1,14 @@
-const express = require('express');
-const router = express.router();
-const fs = require('fs');
+import findAllBlogs, {getBlog} from "./routeFuncs";
 
-router.get("/allblogs", async ()=>{
+const express = require('express');
+const router = express.Router();
+
+router.get("/find_blogs", async (req, res)=>{
+    await findAllBlogs(res);
 });
+
+router.get("/*", async (req, res)=>{
+    await getBlog(req.url, res);
+});
+
+module.exports = router;

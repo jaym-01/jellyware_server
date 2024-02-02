@@ -5,8 +5,12 @@
         "noImplicitAny": false,
         "strict": true,
         "experimentalDecorators": false,
-        "target": "ES5",
+        "target": "ES6",
         "outDir": "server_built",
-        "rootDir": ""
-    }
+        "rootDir": "",
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+    ]
 }

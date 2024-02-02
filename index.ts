@@ -1,6 +1,8 @@
 import { verifyResponse } from "./re_captcha/verify";
 import { add_log } from "./logging";
 
+const cors = require('cors')
+
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -14,9 +16,20 @@ const convert_HTML = require("./docx_html/convert_html");
 const verify = require("./re_captcha/verify").default;
 const url_short = require("./url_shortener/url_shortener");
 
+const blog_router = require('./blogs/routes')
+
 const convertHTML = convert_HTML.convert;
 
+app.use((req, res, next)=>{
+  console.log(req.method, " | ", req.originalUrl);
+  next()
+});
+
 app.use(express.static(path.join(__dirname + "/client/build")));
+
+app.use(cors());
+
+app.use("/api/blogs", blog_router);
 
 //post api request
 app.post("/api/convertdocxhtml", mul().single("file"), function (req, res) {
@@ -67,8 +80,8 @@ app.post("/api/shorturl", bp.json(), (req, res) => {
   url_short.createURL(req.body.url, res);
 });
 
-app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+app.get("/api/downloadcv", async (req, res)=>{
+  res.download(path.resolve("./documents/jay_mistry_cv.pdf"));
 });
 
 app.listen(8080, () => console.log("listening"));

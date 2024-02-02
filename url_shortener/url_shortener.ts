@@ -1,3 +1,5 @@
+import DB from "../db/types";
+
 const { readFileSync, writeFileSync } = require("fs");
 const path = require("path");
 const cryptol = require("crypto");
@@ -38,31 +40,16 @@ function getURL(b64Hash: string, res) {
   }
 }
 
-// get code for URL
-function generateURL(urlObjs: object, url: string): string {
-  const b64Hash: string = encodeURL(url);
-
-  // if doesn't exist - add it
-  if (!(b64Hash in urlObjs)) {
-    urlObjs[b64Hash] = url;
-    writeFileSync(
-      path.resolve(__dirname + "/url_data.json"),
-      JSON.stringify(urlObjs)
-    );
-  }
-
-  return b64Hash;
-}
-
-function createURL(url: string, res) {
+function createURL(url: string, res, db: DB) {
   var out: urlRes = { passed: false };
   try {
-    // get data of string added
-    var urlData = readFileSync(path.resolve(__dirname + "/url_data.json"));
-    var urlsObjs = JSON.parse(urlData);
+    // validate url
+    
+    // create hash of url
+    const b64Hash = encodeURL(url);
 
-    // create/find hash of URL provided
-    const b64Hash = generateURL(urlsObjs, url);
+    // check if in db
+    // db.findOneRecord();
 
     // send correct if it does
     out = {

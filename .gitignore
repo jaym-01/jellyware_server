@@ -4,3 +4,8 @@ build
 .vscode
 
 blogs/blogs
+
+.env
+
+/main.ts
+server.log

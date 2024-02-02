@@ -15,7 +15,7 @@ function verify(reqBody, passCB, failCB){
 
         // send data as json file
         const data = {
-            secret: process.env.SECRET,
+            secret: process.env.RECAP_SECRET,
             response: recap_res
         }
 
