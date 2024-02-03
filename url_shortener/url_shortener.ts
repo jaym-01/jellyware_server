@@ -1,4 +1,6 @@
 import DB from "../db/types";
+import { matchString } from "../db/validate";
+import { UrlSchema } from '../db/mongoFuncs';
 
 const { readFileSync, writeFileSync } = require("fs");
 const path = require("path");
@@ -20,19 +22,25 @@ function encodeURL(url: string): string {
   return hash.update(url).digest("base64url");
 }
 
-function getURL(b64Hash: string, res) {
-  var fail: urlRes = {
-    passed: false,
-  };
+async function getURL(b64Hash: string, res, db: DB) {
   try {
     // validate b64Hash
+    const regex = /[A-Za-z0-9-_%]{22}/g;
 
-    var urlData = readFileSync(path.resolve(__dirname + "/url_data.json"));
-    var urlsObjs = JSON.parse(urlData);
+    if(!matchString(b64Hash, regex)) throw new Error("invalid hash");
 
-    if (b64Hash in urlsObjs) res.redirect(urlsObjs[b64Hash]);
+    // check if in db
+    const params: UrlSchema = {
+      b64Hash: b64Hash,
+    }
+    const dbResult = await db.findOneRecord(params);
+    console.log("here")
+
+    console.log(dbResult.url);
+
+    if (dbResult) res.redirect(dbResult.url);
     else {
-      res.sendStatus(404);
+      throw new Error("hash not found in db")
     }
     
   } catch {
@@ -40,16 +48,28 @@ function getURL(b64Hash: string, res) {
   }
 }
 
-function createURL(url: string, res, db: DB) {
+async function createURL(url: string, res, db: DB) {
   var out: urlRes = { passed: false };
   try {
     // validate url
+    const regex = /(http|https):\/\/[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(:[0-9]+)?(\/[$\-_\.\+\!\*\'\(\)\&\?=:%A-Za-z0-9]*)*/g;
+    if(!matchString(url, regex)) throw new Error("invalid url");
     
     // create hash of url
     const b64Hash = encodeURL(url);
 
+    const dbObj: UrlSchema = {
+      b64Hash: b64Hash,
+      url: url,
+    }
+
     // check if in db
-    // db.findOneRecord();
+    const result = await db.findOneRecord(dbObj);
+
+    console.log(result);
+
+    // add it if not in db
+    if(result == null) await db.writeRecord(dbObj);
 
     // send correct if it does
     out = {

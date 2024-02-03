@@ -1,7 +1,8 @@
 import { verifyResponse } from "./re_captcha/verify";
 import { add_log } from "./logging";
+import MongoDBObj from "./db/mongoFuncs";
 
-const cors = require('cors')
+const cors = require("cors");
 
 const express = require("express");
 const app = express();
@@ -16,13 +17,24 @@ const convert_HTML = require("./docx_html/convert_html");
 const verify = require("./re_captcha/verify").default;
 const url_short = require("./url_shortener/url_shortener");
 
-const blog_router = require('./blogs/routes')
+const blog_router = require("./blogs/routes");
 
 const convertHTML = convert_HTML.convert;
 
-app.use((req, res, next)=>{
+let mongoClient: MongoDBObj | undefined;
+
+const init = () => {
+  try {
+    mongoClient = new MongoDBObj(process.env.MONGO_URL!);
+  } catch {
+    throw new Error("failed in init");
+  }
+};
+init();
+
+app.use((req, res, next) => {
   console.log(req.method, " | ", req.originalUrl);
-  next()
+  next();
 });
 
 app.use(express.static(path.join(__dirname + "/client/build")));
@@ -68,19 +80,16 @@ app.post("/api/verify", bp.urlencoded({ extended: false }), (req, res) => {
 });
 
 app.get("/shorturl/:urlid", (req, res) => {
-  // validate input
-  // use regex to ensure it is a valid base64URL value
-
-  url_short.getURL(req.params.urlid, res);
+  if(mongoClient) url_short.getURL(req.params.urlid, res, mongoClient);
+  else res.send("an error occured");
 });
 
 app.post("/api/shorturl", bp.json(), (req, res) => {
-  // validate the url
-
-  url_short.createURL(req.body.url, res);
+  if(mongoClient) url_short.createURL(req.body.url, res, mongoClient);
+  else res.send("an error occured");
 });
 
-app.get("/api/downloadcv", async (req, res)=>{
+app.get("/api/downloadcv", async (req, res) => {
   res.download(path.resolve("./documents/jay_mistry_cv.pdf"));
 });
 

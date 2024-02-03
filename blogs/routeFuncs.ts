@@ -1,3 +1,5 @@
+import { matchString } from "../db/validate";
+
 const fs = require("fs");
 const path = require("path");
 
@@ -7,11 +9,6 @@ interface dirs {
   name: string;
   children?: dirs[];
   href?: string;
-}
-
-function matchString(str: string, regex: RegExp): boolean{
-    const test = str.match(regex);
-    return test != null && test[0] == str;
 }
 
 export default async function findAllBlogs(res) {

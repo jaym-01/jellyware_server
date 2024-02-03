@@ -2,17 +2,22 @@ import * as mongo from "mongodb"
 import DBObj from "./types"
 
 export type UrlSchema = {
-    url?: string,
     b64Hash: string
+    url?: string,
 }
 
-class MongoUrlShortener extends DBObj{
+class MongoDBObj extends DBObj{
     client: mongo.Collection;
 
     constructor(url: string){
-        super();
-        const mongoClient = new mongo.MongoClient(url);
-        this.client = mongoClient.db("jellyware").collection("urlshortener");
+        try{
+            super();
+            const mongoClient = new mongo.MongoClient(url);
+            this.client = mongoClient.db("jellyware").collection("urlshortener");
+        }
+        catch{
+            throw new Error("not URL passed into constructor of MongoDBObj")
+        }
     }
 
     async findOneRecord(queryParams: UrlSchema) {
@@ -35,4 +40,4 @@ class MongoUrlShortener extends DBObj{
     }
 }
 
-export default MongoUrlShortener;
+export default MongoDBObj;
