@@ -34,9 +34,6 @@ async function getURL(b64Hash: string, res, db: DB) {
       b64Hash: b64Hash,
     }
     const dbResult = await db.findOneRecord(params);
-    console.log("here")
-
-    console.log(dbResult.url);
 
     if (dbResult) res.redirect(dbResult.url);
     else {
@@ -65,8 +62,6 @@ async function createURL(url: string, res, db: DB) {
 
     // check if in db
     const result = await db.findOneRecord(dbObj);
-
-    console.log(result);
 
     // add it if not in db
     if(result == null) await db.writeRecord(dbObj);
