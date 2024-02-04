@@ -14,6 +14,7 @@ class MongoDBObj extends DBObj{
             super();
             const mongoClient = new mongo.MongoClient(url);
             this.client = mongoClient.db("jellyware").collection("urlshortener");
+            console.log("init mongo passed")
         }
         catch{
             throw new Error("not URL passed into constructor of MongoDBObj")
