@@ -60,8 +60,10 @@ async function createURL(url: string, res, db: DB) {
       url: url,
     }
 
+    console.log("before db")
     // check if in db
     const result = await db.findOneRecord(dbObj);
+    console.log("after db")
 
     // add it if not in db
     if(result == null) await db.writeRecord(dbObj);
