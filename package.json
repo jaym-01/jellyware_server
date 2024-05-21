@@ -2,10 +2,10 @@
   "name": "jellyware_backend",
   "version": "1.0.0",
   "description": "backend for jellyware",
-  "main": "index.ts",
+  "main": "main.ts",
   "scripts": {
-    "start": "ts-node index.ts",
-    "dev": "nodemon index.ts"
+    "start": "ts-node main.ts",
+    "dev": "nodemon main.ts"
   },
   "author": "Jay",
   "dependencies": {
