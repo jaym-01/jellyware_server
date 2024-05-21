@@ -7,5 +7,4 @@ build
 
 .env
 
-/main.ts
 server.log
